@@ -46,7 +46,13 @@ DATABRICKS_HTTP_PATH=/sql/1.0/warehouses/your-warehouse-id
 
 ### Running the MCP Server
 
-To start the MCP server:
+The package provides an executable command `mcp-databricks` that you can run:
+
+```bash
+uv run mcp-databricks
+```
+
+Alternatively, you can run the main module directly:
 
 ```bash
 uv run python main.py
@@ -63,6 +69,12 @@ uv run mcp dev main.py
 The MCP Inspector is a powerful tool for testing and debugging your MCP server. It provides a web-based interface to interact with your server's tools.
 
 To start the inspector:
+
+```bash
+npx @modelcontextprotocol/inspector uv run mcp-databricks
+```
+
+Or use the main module directly:
 
 ```bash
 npx @modelcontextprotocol/inspector uv run python main.py
