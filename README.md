@@ -136,8 +136,10 @@ Get the schema of a Databricks table including column names and data types.
 
 Execute a SQL query on Databricks and return the results.
 
+**IMPORTANT:** When querying tables, you **MUST** use the full three-level namespace format: `catalog.schema.table` (e.g., `main.default.users`). Do **NOT** use two-level format like `schema.table` as it will fail in Unity Catalog.
+
 **Parameters:**
-- `query` (string): The SQL query to execute
+- `query` (string): The SQL query to execute. Must use full table names (catalog.schema.table)
 - `max_rows` (integer, optional): Maximum number of rows to return (default: 1000)
 
 **Returns:**
@@ -151,6 +153,28 @@ Execute a SQL query on Databricks and return the results.
   ],
   "row_count": 2,
   "truncated": false
+}
+```
+
+#### 3. list_tables
+
+List all tables in a Databricks catalog and schema.
+
+**Parameters:**
+- `catalog` (string, optional): The catalog name (uses DATABRICKS_CATALOG env var if not provided)
+- `schema` (string, optional): The schema name (uses DATABRICKS_SCHEMA env var if not provided)
+
+**Returns:**
+```json
+{
+  "catalog": "main",
+  "schema": "default",
+  "tables": [
+    {"name": "users", "is_temporary": false},
+    {"name": "orders", "is_temporary": false}
+  ],
+  "table_count": 2,
+  "usage_hint": "To query these tables, use the full name: main.default.<table_name>"
 }
 ```
 
@@ -241,6 +265,9 @@ If you encounter connection errors:
 
 ### Query Execution Errors
 
+- **Table not found errors**: Always use the full three-level namespace `catalog.schema.table` in SQL queries
+  - ✅ Correct: `SELECT * FROM main.default.users`
+  - ❌ Incorrect: `SELECT * FROM default.users` or `SELECT * FROM users`
 - Ensure the user/service principal has appropriate permissions on the catalogs, schemas, and tables
 - Check that Unity Catalog is enabled if using three-level namespace (catalog.schema.table)
 - Verify SQL syntax is compatible with Databricks SQL

@@ -119,12 +119,21 @@ def execute_sql_query(query: str, max_rows: int = 1000) -> dict[str, Any]:
     """
     Execute a SQL query on Databricks and return the results.
 
+    IMPORTANT: When querying tables, you MUST use the full three-level namespace format:
+    catalog.schema.table (e.g., "SELECT * FROM main.default.users")
+
+    Do NOT use two-level format like schema.table as it will fail in Unity Catalog.
+
     Args:
-        query: The SQL query to execute
+        query: The SQL query to execute. Must use full table names (catalog.schema.table)
         max_rows: Maximum number of rows to return (default: 1000)
 
     Returns:
         A dictionary containing the query results with columns and data
+
+    Example:
+        Correct: "SELECT * FROM main.default.users LIMIT 10"
+        Incorrect: "SELECT * FROM default.users LIMIT 10"
     """
     try:
         connection = get_databricks_connection()
@@ -211,7 +220,8 @@ def list_tables(catalog: str | None = None, schema: str | None = None) -> dict[s
             "catalog": catalog,
             "schema": schema,
             "tables": tables,
-            "table_count": len(tables)
+            "table_count": len(tables),
+            "usage_hint": f"To query these tables, use the full name: {catalog}.{schema}.<table_name>"
         }
 
     except Exception as e:
