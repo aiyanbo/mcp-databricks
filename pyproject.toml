@@ -20,4 +20,5 @@ dependencies = [
 mcp-databricks = "main:mcp.run"
 
 [tool.hatch.build.targets.wheel]
-packages = ["main.py"]
+packages = ["."]
+only-include = ["main.py"]
